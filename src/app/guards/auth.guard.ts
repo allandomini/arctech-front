@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import Keycloak from 'keycloak-js';
 
@@ -6,7 +6,8 @@ import Keycloak from 'keycloak-js';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  constructor(private router: Router, private keycloak: Keycloak) {}
+  private router = inject(Router);
+  private keycloak = inject(Keycloak);
 
   canActivate(): boolean {
     if (this.keycloak.authenticated) {

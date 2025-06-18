@@ -5,6 +5,7 @@ import { App } from './app/app';
 import Keycloak, { KeycloakInstance } from 'keycloak-js';
 import { AuthGuard } from './app/guards/auth.guard';
 import { StatsService } from './app/services/stats.service';
+import { routes } from './app/app.routes';
 
 // ——— Keycloak singleton ———
 export const keycloak: KeycloakInstance = new Keycloak({
@@ -32,23 +33,7 @@ keycloak
     await bootstrapApplication(App, {
       providers: [
         provideHttpClient(tokenInterceptor),
-        provideRouter([
-          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-          {
-            path: 'dashboard',
-            loadComponent: () =>
-              import('./app/pages/dashboard.page').then(m => m.DashboardPage),
-            canActivate: [AuthGuard]
-          },
-          // highlight-start
-          // Add the missing 'about' route configuration
-          {
-            path: 'about',
-            loadComponent: () =>
-              import('./app/pages/about/about').then(m => m.About)
-          }
-          // highlight-end
-        ]),
+        provideRouter(routes),
         { provide: Keycloak, useValue: keycloak }, // injetável nos serviços/guards
         StatsService, // Provider para o StatsService
       ],
