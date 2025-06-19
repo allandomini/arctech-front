@@ -1,0 +1,133 @@
+<!-- contas.component.html -->
+<div class="container mx-auto p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold">Contas</h1>
+    <button (click)="abrirModal()" 
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+      Nova Transação
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Tabela de Contas -->
+  <div *ngIf="!loading" class="bg-white rounded-lg shadow overflow-hidden">
+    <table class="min-w-full">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Data
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Descrição
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Instituição
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Valor
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Ações
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let conta of contas">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ conta.data | date:'dd/MM/yyyy' }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ conta.descricao }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ conta.instituicao?.nome }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" [ngClass]="getClasseTipo(conta.tipo)">
+            {{ formatarValor(conta.valor, conta.tipo) }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <button (click)="abrirModal(conta)" class="text-indigo-600 hover:text-indigo-900 mr-3">
+              Editar
+            </button>
+            <button (click)="excluirConta(conta.id!)" class="text-red-600 hover:text-red-900">
+              Excluir
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div *ngIf="contas.length === 0" class="text-center py-8 text-gray-500">
+      Nenhuma transação cadastrada
+    </div>
+  </div>
+
+  <!-- Modal de Cadastro/Edição -->
+  <div *ngIf="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-bold text-gray-900 mb-4">
+        {{ editingId ? 'Editar' : 'Nova' }} Transação
+      </h3>
+      
+      <form [formGroup]="contaForm" (ngSubmit)="salvarConta()">
+        <!-- Data -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Data</label>
+          <input type="date" formControlName="data" 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <!-- Descrição -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+          <input type="text" formControlName="descricao" 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="Descrição da transação">
+        </div>
+
+        <!-- Valor -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Valor</label>
+          <input type="number" formControlName="valor" step="0.01" min="0.01"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="0,00">
+        </div>
+
+        <!-- Tipo -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+          <select formControlName="tipo" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            <option *ngFor="let tipo of tiposConta" [value]="tipo">{{ tipo }}</option>
+          </select>
+        </div>
+
+        <!-- Instituição -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Instituição</label>
+          <select formControlName="instituicao" 
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            <option value="">Selecione uma instituição</option>
+            <option *ngFor="let inst of instituicoes" [value]="inst.id">{{ inst.nome }}</option>
+          </select>
+        </div>
+
+        <!-- Botões -->
+        <div class="flex justify-end gap-2">
+          <button type="button" (click)="fecharModal()" 
+                  class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="!contaForm.valid"
+                  class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+            Salvar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

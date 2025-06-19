@@ -1,0 +1,106 @@
+<!-- admin-config.component.html -->
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-6">Configurações do Sistema</h1>
+
+  <!-- Tabs -->
+  <div class="border-b border-gray-200 mb-6">
+    <nav class="-mb-px flex space-x-8">
+      <button (click)="activeTab = 'instituicoes'"
+              [class.border-blue-500]="activeTab === 'instituicoes'"
+              [class.text-blue-600]="activeTab === 'instituicoes'"
+              [class.border-transparent]="activeTab !== 'instituicoes'"
+              [class.text-gray-500]="activeTab !== 'instituicoes'"
+              class="py-2 px-1 border-b-2 font-medium text-sm transition">
+        Instituições
+      </button>
+    </nav>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Conteúdo -->
+  <div *ngIf="!loading">
+    <!-- Instituições -->
+    <div *ngIf="activeTab === 'instituicoes'">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Instituições Financeiras</h2>
+        <button (click)="abrirModalInstituicao()" 
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+          Nova Instituição
+        </button>
+      </div>
+
+      <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Nome
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Ações
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let inst of instituicoes">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {{ inst.nome }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button (click)="abrirModalInstituicao(inst)" 
+                        class="text-indigo-600 hover:text-indigo-900 mr-3">
+                  Editar
+                </button>
+                <button (click)="excluirInstituicao(inst.id!)" 
+                        class="text-red-600 hover:text-red-900">
+                  Excluir
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div *ngIf="instituicoes.length === 0" class="text-center py-8 text-gray-500">
+          Nenhuma instituição cadastrada
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Instituição -->
+  <div *ngIf="showInstituicaoModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-bold text-gray-900 mb-4">
+        {{ editingInstituicaoId ? 'Editar' : 'Nova' }} Instituição
+      </h3>
+      
+      <form [formGroup]="instituicaoForm" (ngSubmit)="salvarInstituicao()">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+          <input type="text" formControlName="nome" 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="Nome da instituição">
+          <p *ngIf="instituicaoForm.get('nome')?.invalid && instituicaoForm.get('nome')?.touched" 
+             class="mt-1 text-sm text-red-600">
+            Nome é obrigatório (mínimo 2 caracteres)
+          </p>
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <button type="button" (click)="fecharModalInstituicao()" 
+                  class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="!instituicaoForm.valid"
+                  class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+            Salvar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

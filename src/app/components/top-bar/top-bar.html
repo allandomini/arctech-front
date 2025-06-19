@@ -1,0 +1,30 @@
+<nav class="w-full bg-blue-700 shadow-md fixed top-0 left-0 z-50">
+  <div class="container mx-auto px-6 py-3 flex items-center h-16 justify-between">
+    <span class="text-white text-2xl font-bold tracking-wide">Arctech</span>
+    <ul class="flex gap-6 items-center">
+      <li><a routerLink="/dashboard" routerLinkActive="font-bold underline" class="text-white hover:text-blue-200 transition">Dashboard</a></li>
+      <li><a routerLink="/contas" routerLinkActive="font-bold underline" class="text-white hover:text-blue-200 transition">Contas</a></li>
+      <li><a routerLink="/extrato" routerLinkActive="font-bold underline" class="text-white hover:text-blue-200 transition">Extrato</a></li>
+      <li><a routerLink="/tarefas" routerLinkActive="font-bold underline" class="text-white hover:text-blue-200 transition">Tarefas</a></li>
+      <li><a routerLink="/admin/configuracoes" routerLinkActive="font-bold underline" class="text-white hover:text-blue-200 transition">Administração</a></li>
+    </ul>
+    
+    <!-- Authentication UI -->
+    <div class="flex items-center gap-3">
+      <div *ngIf="!isLoggedIn" class="flex items-center gap-2">
+        <span class="text-white text-sm">Não logado</span>
+        <button (click)="login()" class="bg-white text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-50 transition">
+          Login
+        </button>
+      </div>
+      <div *ngIf="isLoggedIn" class="flex items-center gap-2">
+        <span class="text-white text-sm">Logado como: {{ username }}</span>
+        <button (click)="logout()" class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition">
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- Espaço para não sobrepor o conteúdo -->
+<div class="h-16"></div>

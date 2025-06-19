@@ -1,34 +1,15 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import Keycloak from 'keycloak-js';
+import { TopBar } from './components/top-bar/top-bar';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, TopBar],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App implements OnInit {
+export class App {
   protected title = 'artech-front';
-  protected isLoggedIn = false;
-  protected username = '';
-  private keycloak = inject(Keycloak);
-
-  ngOnInit() {
-    this.isLoggedIn = this.keycloak.authenticated || false;
-    if (this.isLoggedIn) {
-      this.username = this.keycloak.tokenParsed?.['preferred_username'] || '';
-      console.log('Logado!');
-    }
-  }
-
-  login() {
-    this.keycloak.login();
-  }
-
-  logout() {
-    this.keycloak.logout();
-  }
 }

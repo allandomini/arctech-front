@@ -1,0 +1,89 @@
+<!-- task-groups.component.html -->
+<div class="container mx-auto p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold">Grupos de Tarefas</h1>
+    <button (click)="abrirModal()" 
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+      Novo Grupo
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Grid de Grupos -->
+  <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let group of groups" 
+         (click)="abrirGrupo(group.id!)"
+         class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer">
+      <div class="flex items-start justify-between mb-4">
+        <h3 class="text-xl font-semibold text-gray-900">{{ group.name }}</h3>
+        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M9 5l7 7-7 7"></path>
+        </svg>
+      </div>
+      
+      <div class="text-sm text-gray-600">
+        <p class="mb-2">
+          <span class="font-medium">Listas:</span> 
+          {{ getNumListas(group) }}
+        </p>
+        <p>
+          <span class="font-medium">Total de tarefas:</span>
+          {{ getTotalTarefas(group) }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Card vazio quando não há grupos -->
+    <div *ngIf="groups.length === 0" 
+         class="col-span-full text-center py-12 bg-gray-50 rounded-lg">
+      <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum grupo criado</h3>
+      <p class="text-gray-500 mb-4">Crie seu primeiro grupo para começar a organizar suas tarefas</p>
+      <button (click)="abrirModal()" 
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+        Criar primeiro grupo
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal de Criação -->
+  <div *ngIf="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <h3 class="text-lg font-bold text-gray-900 mb-4">
+        Novo Grupo de Tarefas
+      </h3>
+      
+      <form [formGroup]="groupForm" (ngSubmit)="criarGrupo()">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Grupo</label>
+          <input type="text" formControlName="name" 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="Ex: Projetos Pessoais">
+          <p *ngIf="groupForm.get('name')?.invalid && groupForm.get('name')?.touched" 
+             class="mt-1 text-sm text-red-600">
+            Nome é obrigatório (mínimo 3 caracteres)
+          </p>
+        </div>
+
+        <div class="flex justify-end gap-2">
+          <button type="button" (click)="fecharModal()" 
+                  class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="!groupForm.valid"
+                  class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+            Criar Grupo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

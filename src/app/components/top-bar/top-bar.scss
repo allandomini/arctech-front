@@ -1,0 +1,13 @@
+nav {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+@media (max-width: 640px) {
+  nav .text-2xl {
+    font-size: 1.25rem;
+  }
+  nav .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
