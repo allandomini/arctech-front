@@ -11,7 +11,7 @@ import { routes } from './app/app.routes';
 
 // ——— Keycloak singleton ———
 export const keycloak: KeycloakInstance = new Keycloak({
-  url: 'http://localhost:8080',
+  url: 'http://192.168.56.12:8080', 
   realm: 'arctech-realm',
   clientId: 'angular-app',
 });
