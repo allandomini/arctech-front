@@ -8,8 +8,8 @@ Este projeto está configurado com autenticação Keycloak usando a nova estrutu
 ```typescript
 // ——— Keycloak singleton ———
 export const keycloak: KeycloakInstance = new Keycloak({
-  url: 'http://localhost:8080',
-  realm: 'arctech-realm',
+  url: 'http://auth.arctech.net:8080',
+  realm: 'arctech',
   clientId: 'angular-app',
 });
 
